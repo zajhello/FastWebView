@@ -21,6 +21,12 @@ import android.util.Log;
 import com.tencent.sonic.sdk.SonicConstants;
 import com.tencent.sonic.sdk.SonicSessionStream;
 import com.tencent.sonic.sdk.SonicUtils;
+import com.tencent.sonic.sdk.net.OkHttpUtils;
+import com.tencent.sonic.sdk.net.interceptor.HttpInterceptor;
+import com.tencent.sonic.sdk.net.RequestHandle;
+import com.tencent.sonic.sdk.net.interceptor.HttpLogInterceptor;
+import com.tencent.sonic.sdk.provider.BaseHttpProvider;
+import com.tencent.sonic.sdk.provider.IHttpProvider;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -32,16 +38,22 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.GZIPInputStream;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 import static com.tencent.sonic.sdk.SonicSessionConnection.HTTP_HEAD_FIELD_COOKIE;
 import static java.net.HttpURLConnection.HTTP_OK;
 
 /**
  * Handles a single HTTP resource download
- *
  */
 public class SonicDownloadClient implements SonicSessionStream.Callback {
 
@@ -129,7 +141,9 @@ public class SonicDownloadClient implements SonicSessionStream.Callback {
     /**
      * A download connection implement.
      */
-    private final SonicDownloadConnection mConn;
+//    private final SonicDownloadConnection mConn;
+    private final SonicDownloadOkhttp mConn;
+
 
     /**
      * the responding download task
@@ -145,7 +159,7 @@ public class SonicDownloadClient implements SonicSessionStream.Callback {
 
     public SonicDownloadClient(DownloadTask task) {
         mTask = task;
-        mConn = new SonicDownloadConnection(task.mResourceUrl);
+        mConn = new SonicDownloadOkhttp(task.mResourceUrl);
         mOutputStream = new ByteArrayOutputStream();
     }
 
@@ -187,7 +201,7 @@ public class SonicDownloadClient implements SonicSessionStream.Callback {
         try {
             byte[] buffer = new byte[READ_BUFFER_SIZE];
 
-            int total = mConn.connectionImpl.getContentLength();
+            int total = (int) mConn.getContentLength();
             int n = 0, sum = 0;
             while (((breakCondition == null) || !breakCondition.get()) && -1 != (n = bufferedInputStream.read(buffer))) {
                 mOutputStream.write(buffer, 0, n);
@@ -278,6 +292,121 @@ public class SonicDownloadClient implements SonicSessionStream.Callback {
         mConn.disconnect();
     }
 
+
+    public class SonicDownloadOkhttp {
+        private Request request;
+        private Response response;
+
+        private String url;
+        private BufferedInputStream responseStream;
+
+
+        public SonicDownloadOkhttp(String url) {
+            this.url = url;
+            request = createRequest();
+        }
+
+        private Request createRequest() {
+            String currentUrl = url;
+            if (TextUtils.isEmpty(currentUrl)) {
+                return null;
+            }
+
+            Request request = null;
+            try {
+                URL url = new URL(currentUrl);
+                String originHost = null;
+
+                if (!TextUtils.isEmpty(mTask.mIpAddress)) {
+                    originHost = url.getHost();
+                    url = new URL(currentUrl.replace(originHost, mTask.mIpAddress));
+                    SonicUtils.log(TAG, Log.INFO, "create UrlConnection with DNS-Prefetch(" + originHost + " -> " + mTask.mIpAddress + ").");
+                }
+
+                Request.Builder builder = new Request.Builder();
+                builder.url(url);
+                if (!TextUtils.isEmpty(originHost)) {
+                    builder.addHeader("Host", originHost);
+                }
+
+                builder.addHeader("method", "GET");
+                builder.addHeader("Accept-Encoding", "gzip");
+                builder.addHeader("Accept-Language", "zh-CN,zh;");
+
+                if (!TextUtils.isEmpty(mTask.mCookie)) {
+                    builder.addHeader(HTTP_HEAD_FIELD_COOKIE, mTask.mCookie);
+                }
+
+                request = builder.get().build();
+
+            } catch (Throwable e) {
+                if (request != null) {
+                    request = null;
+                }
+                SonicUtils.log(TAG, Log.ERROR, "create request fail, error:" + e.getMessage() + ".");
+            }
+            return request;
+        }
+
+
+        synchronized int connect() {
+            try {
+                Call call = OkHttpUtils.getInstance().Get().newCall(request);
+                response = call.execute();
+                if (!response.isSuccessful())
+                    return SonicConstants.ERROR_CODE_CONNECT_IOE;
+
+                return SonicConstants.ERROR_CODE_SUCCESS;
+            } catch (Exception e) {
+                return SonicConstants.ERROR_CODE_CONNECT_IOE;
+            }
+        }
+
+        public void disconnect() {
+            try {
+                if (response != null) {
+                    response.close();
+                }
+            } catch (Exception e) {
+                SonicUtils.log(TAG, Log.ERROR, "disconnect error:" + e.getMessage());
+            }
+        }
+
+
+        BufferedInputStream getResponseStream() {
+            if (null == responseStream && null != response) {
+                try {
+                    InputStream inputStream = response.body().byteStream();
+                    if ("gzip".equalsIgnoreCase(response.header("Content-Encoding"))) {
+                        responseStream = new BufferedInputStream(new GZIPInputStream(inputStream));
+                    } else {
+                        responseStream = new BufferedInputStream(inputStream);
+                    }
+                } catch (Throwable e) {
+                    SonicUtils.log(TAG, Log.ERROR, "getResponseStream error:" + e.getMessage() + ".");
+                }
+            }
+            return responseStream;
+        }
+
+        int getResponseCode() {
+            return response.code();
+        }
+
+        long getContentLength() {
+            return response.body().contentLength();
+        }
+
+
+        Map<String, List<String>> getResponseHeaderFields() {
+            if (null == response) {
+                return null;
+            }
+            return response.headers().toMultimap();
+        }
+    }
+
+
     public class SonicDownloadConnection {
         final URLConnection connectionImpl;
 
@@ -337,6 +466,10 @@ public class SonicDownloadClient implements SonicSessionStream.Callback {
                 return true;
             }
             return false;
+        }
+
+        long getContentLength() {
+            return connectionImpl.getContentLength();
         }
 
         synchronized int connect() {

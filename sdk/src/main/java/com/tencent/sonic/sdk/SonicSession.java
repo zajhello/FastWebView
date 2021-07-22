@@ -703,6 +703,10 @@ public abstract class SonicSession implements Handler.Callback {
 
         // when find preload links in headers
         String preloadLink = server.getResponseHeaderField(SonicSessionConnection.CUSTOM_HEAD_FILED_LINK);
+        if(TextUtils.isEmpty(preloadLink)){
+            preloadLink = "https://mc.vip.qq.com/img/img-1.png?max_age=2592000";
+        }
+
         if (!TextUtils.isEmpty(preloadLink)) {
             preloadLinks = Arrays.asList(preloadLink.split(";"));
             handleFlow_PreloadSubResource();
@@ -1220,8 +1224,7 @@ public abstract class SonicSession implements Handler.Callback {
                 SonicUtils.log(TAG, Log.DEBUG, "onClientRequestResource called in " + currentThreadName + ".");
             }
         }
-        Object object = isMatchCurrentUrl(url)
-                ? onRequestResource(url)
+        Object object = isMatchCurrentUrl(url) ? onRequestResource(url)
                 : (resourceDownloaderEngine != null ? resourceDownloaderEngine.onRequestSubResource(url, this) : null);
         resourceInterceptState.set(RESOURCE_INTERCEPT_STATE_NONE);
         return object;

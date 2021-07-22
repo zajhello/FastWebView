@@ -34,8 +34,9 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSession;
 
+import okhttp3.OkHttpClient;
+
 /**
- *
  * The abstract class <code>SonicSessionConnection</code> is the superclass
  * of all classes that represent a communications link between the
  * application and a URL. Instances of this class can be used both to
@@ -102,7 +103,6 @@ public abstract class SonicSessionConnection {
 
     /**
      * HTTP header: . <br>
-     *
      */
     public final static String CUSTOM_HEAD_FILED_HTML_SHA1 = "sonic-html-sha1";
 
@@ -190,8 +190,9 @@ public abstract class SonicSessionConnection {
 
     /**
      * Constructor
+     *
      * @param session The SonicSession instance
-     * @param intent The intent
+     * @param intent  The intent
      */
     public SonicSessionConnection(SonicSession session, Intent intent) {
         this.session = session;
@@ -199,7 +200,6 @@ public abstract class SonicSessionConnection {
     }
 
     /**
-     *
      * Opens a communications link to the resource referenced by Sonic session
      *
      * @return Returns the response code of connection
@@ -220,14 +220,12 @@ public abstract class SonicSessionConnection {
     public abstract Map<String, List<String>> getResponseHeaderFields();
 
     /**
-     *
-     * @param key  the name of a header field.
+     * @param key the name of a header field.
      * @return Returns the value of the named header field.
      */
     public abstract String getResponseHeaderField(String key);
 
     /**
-     *
      * @return Returns an input stream that reads from this open connection.
      */
     public synchronized BufferedInputStream getResponseStream() {
@@ -255,10 +253,9 @@ public abstract class SonicSessionConnection {
     public static class SessionConnectionDefaultImpl extends SonicSessionConnection {
 
         /**
-         *  A default http connection referred to by the {@code com.tencent.sonic.sdk.SonicSession#currUrl}.
+         * A default http connection referred to by the {@code com.tencent.sonic.sdk.SonicSession#currUrl}.
          */
         protected final URLConnection connectionImpl;
-
 
 
         public SessionConnectionDefaultImpl(SonicSession session, Intent intent) {
@@ -301,6 +298,7 @@ public abstract class SonicSessionConnection {
                          * So http header need to set the Host and {@link com.tencent.sonic.sdk.SonicSessionConnection.CUSTOM_HEAD_FILED_DNS_PREFETCH} request property.
                          */
                         connection.setRequestProperty("Host", originHost);
+
 
                         connection.setRequestProperty(SonicSessionConnection.CUSTOM_HEAD_FILED_DNS_PREFETCH, url.getHost());
                         if (connection instanceof HttpsURLConnection) { // 如果属于https，需要特殊处理，比如支持sni
@@ -521,56 +519,4 @@ public abstract class SonicSessionConnection {
             return !TextUtils.isEmpty(sonicEtagValue) ? sonicEtagValue : CUSTOM_HEAD_FILED_ETAG;
         }
     }
-
-
-    public static class SessionConnectionOkhttpImpl extends SonicSessionConnection{
-
-
-
-        public SessionConnectionOkhttpImpl(SonicSession session, Intent intent) {
-            super(session, intent);
-
-
-        }
-
-
-
-        @Override
-        public void disconnect() {
-
-        }
-
-        @Override
-        public int getResponseCode() {
-            return 0;
-        }
-
-        @Override
-        public Map<String, List<String>> getResponseHeaderFields() {
-            return null;
-        }
-
-        @Override
-        public String getResponseHeaderField(String key) {
-            return null;
-        }
-
-        @Override
-        protected int internalConnect() {
-            return 0;
-        }
-
-        @Override
-        protected BufferedInputStream internalGetResponseStream() {
-            return null;
-        }
-
-        @Override
-        protected String internalGetCustomHeadFieldEtag() {
-            return null;
-        }
-    }
-
-
-
 }
