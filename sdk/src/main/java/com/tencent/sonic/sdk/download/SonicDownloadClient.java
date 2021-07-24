@@ -225,16 +225,19 @@ public class SonicDownloadClient implements SonicSessionStream.Callback {
 
     private synchronized boolean getResponseStream(AtomicBoolean breakConditions) {
         if (readServerResponse(breakConditions)) {
+
             BufferedInputStream netStream = mDownloadFinished ? null : mConn.getResponseStream();
             mTask.mInputStream = new SonicSessionStream(this, mOutputStream, netStream);
             synchronized (mTask.mWasInterceptInvoked) {
                 mTask.mWasInterceptInvoked.notify();
             }
+
             if (mDownloadFinished) {
                 SonicUtils.log(TAG, Log.INFO, "sub resource compose a memory stream (" + mTask.mResourceUrl + ").");
             } else {
                 SonicUtils.log(TAG, Log.INFO, "sub resource compose a bridge stream (" + mTask.mResourceUrl + ").");
             }
+
             return true;
         } else {
             return false;

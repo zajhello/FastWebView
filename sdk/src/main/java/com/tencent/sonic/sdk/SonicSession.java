@@ -856,6 +856,7 @@ public abstract class SonicSession implements Handler.Callback {
                 if (resourceDownloaderEngine == null) {
                     resourceDownloaderEngine = new SonicDownloadEngine(SonicDownloadCache.getSubResourceCache());
                 }
+
                 resourceDownloaderEngine.addSubResourcePreloadTask(preloadLinks);
             }
         }, 0);
