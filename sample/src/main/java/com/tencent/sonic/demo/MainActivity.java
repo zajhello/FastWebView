@@ -85,6 +85,7 @@ public class MainActivity extends Activity {
 
                 SonicSessionConfig.Builder sessionConfigBuilder = new SonicSessionConfig.Builder();
                 sessionConfigBuilder.setSupportLocalServer(true);
+                sessionConfigBuilder.setSupportOkhttoDownloader(false);
 
                 // preload session
                 boolean preloadSuccess = SonicEngine.getInstance().preCreateSession(DEMO_URL, sessionConfigBuilder.build());

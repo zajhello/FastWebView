@@ -16,11 +16,9 @@ package com.tencent.sonic.sdk;
 import java.util.Map;
 
 /**
- *
  * The sonicSession configurations. A sonicSession configuration describes
  * the http(s) connection time out, the way sonicSession's id be generated and
  * so on
- *
  */
 public class SonicSessionConfig {
 
@@ -78,6 +76,11 @@ public class SonicSessionConfig {
     boolean SUPPORT_LOCAL_SERVER = false;
 
     /**
+     * Use okhttp to download resource , defalut is false , not support.
+     */
+    boolean SUPPORT_OKHTTP_DOWNLOADER = false;
+
+    /**
      * The toast when network unavailable
      */
     String USE_SONIC_CACHE_IN_BAD_NETWORK_TOAST = "Bad Network!";
@@ -93,7 +96,7 @@ public class SonicSessionConfig {
     SonicCacheInterceptor cacheInterceptor = null;
 
     /**
-     *{@link SonicSessionConnectionInterceptor} object, provider SonicSessionConnection
+     * {@link SonicSessionConnectionInterceptor} object, provider SonicSessionConnection
      */
     SonicSessionConnectionInterceptor connectionInterceptor = null;
 
@@ -110,7 +113,7 @@ public class SonicSessionConfig {
     @Override
     public boolean equals(Object other) {
         if (other instanceof SonicSessionConfig) {
-            SonicSessionConfig config = (SonicSessionConfig)other;
+            SonicSessionConfig config = (SonicSessionConfig) other;
             return sessionMode == config.sessionMode && SUPPORT_LOCAL_SERVER == config.SUPPORT_LOCAL_SERVER;
         }
 
@@ -213,6 +216,10 @@ public class SonicSessionConfig {
             return this;
         }
 
+        public Builder setSupportOkhttoDownloader(boolean enable) {
+            target.SUPPORT_OKHTTP_DOWNLOADER = enable;
+            return this;
+        }
 
         public SonicSessionConfig build() {
             return target;
