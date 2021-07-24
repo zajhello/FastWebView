@@ -35,9 +35,9 @@ public class OkHttpUtils {
         RequestHandle operator = provider.requestOperator();
         builder.addInterceptor(new HttpInterceptor(operator));
 
-//        if (provider.enableLog()) {
-//            builder.addInterceptor(new HttpLogInterceptor());
-//        }
+        if (provider.enableLog()) {
+            builder.addInterceptor(new HttpLogInterceptor());
+        }
         return builder.build();
     }
 
