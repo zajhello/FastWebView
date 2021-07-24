@@ -136,13 +136,16 @@ public class SonicDownloadClient implements SonicSessionStream.Callback {
          * list of download callback
          */
         public List<SonicDownloadCallback> mCallbacks = new ArrayList<SonicDownloadCallback>();
+
+
+        public boolean mSupportOkhttpDownload = false;
     }
 
     /**
      * A download connection implement.
      */
 //    private final SonicDownloadConnection mConn;
-    private final SonicDownloadOkhttp mConn;
+    private final DownloadConnection mConn;
 
 
     /**
@@ -159,7 +162,11 @@ public class SonicDownloadClient implements SonicSessionStream.Callback {
 
     public SonicDownloadClient(DownloadTask task) {
         mTask = task;
-        mConn = new SonicDownloadOkhttp(task.mResourceUrl);
+        if (task.mSupportOkhttpDownload) {
+            mConn = new SonicDownloadOkhttp(task.mResourceUrl);
+        } else {
+            mConn = new SonicDownloadConnection(task.mResourceUrl);
+        }
         mOutputStream = new ByteArrayOutputStream();
     }
 
@@ -296,7 +303,7 @@ public class SonicDownloadClient implements SonicSessionStream.Callback {
     }
 
 
-    public class SonicDownloadOkhttp {
+    public class SonicDownloadOkhttp implements DownloadConnection {
         private Request request;
         private Response response;
 
@@ -352,7 +359,7 @@ public class SonicDownloadClient implements SonicSessionStream.Callback {
         }
 
 
-        synchronized int connect() {
+        public synchronized int connect() {
             try {
                 Call call = OkHttpUtils.getInstance().Get().newCall(request);
                 response = call.execute();
@@ -376,7 +383,7 @@ public class SonicDownloadClient implements SonicSessionStream.Callback {
         }
 
 
-        BufferedInputStream getResponseStream() {
+        public BufferedInputStream getResponseStream() {
             if (null == responseStream && null != response) {
                 try {
                     InputStream inputStream = response.body().byteStream();
@@ -392,16 +399,16 @@ public class SonicDownloadClient implements SonicSessionStream.Callback {
             return responseStream;
         }
 
-        int getResponseCode() {
+        public int getResponseCode() {
             return response.code();
         }
 
-        long getContentLength() {
+        public long getContentLength() {
             return response.body().contentLength();
         }
 
 
-        Map<String, List<String>> getResponseHeaderFields() {
+        public Map<String, List<String>> getResponseHeaderFields() {
             if (null == response) {
                 return null;
             }
@@ -409,8 +416,22 @@ public class SonicDownloadClient implements SonicSessionStream.Callback {
         }
     }
 
+    interface DownloadConnection {
 
-    public class SonicDownloadConnection {
+        int connect();
+
+        void disconnect();
+
+        BufferedInputStream getResponseStream();
+
+        int getResponseCode();
+
+        long getContentLength();
+
+        Map<String, List<String>> getResponseHeaderFields();
+    }
+
+    public class SonicDownloadConnection implements DownloadConnection {
         final URLConnection connectionImpl;
 
         private String url;
@@ -471,11 +492,11 @@ public class SonicDownloadClient implements SonicSessionStream.Callback {
             return false;
         }
 
-        long getContentLength() {
+        public long getContentLength() {
             return connectionImpl.getContentLength();
         }
 
-        synchronized int connect() {
+        public synchronized int connect() {
             if (connectionImpl instanceof HttpURLConnection) {
                 HttpURLConnection httpURLConnection = (HttpURLConnection) connectionImpl;
                 try {
@@ -499,7 +520,7 @@ public class SonicDownloadClient implements SonicSessionStream.Callback {
             }
         }
 
-        BufferedInputStream getResponseStream() {
+        public BufferedInputStream getResponseStream() {
             if (null == responseStream && null != connectionImpl) {
                 try {
                     InputStream inputStream = connectionImpl.getInputStream();
@@ -515,7 +536,7 @@ public class SonicDownloadClient implements SonicSessionStream.Callback {
             return responseStream;
         }
 
-        int getResponseCode() {
+        public int getResponseCode() {
             if (connectionImpl instanceof HttpURLConnection) {
                 try {
                     return ((HttpURLConnection) connectionImpl).getResponseCode();
@@ -528,13 +549,14 @@ public class SonicDownloadClient implements SonicSessionStream.Callback {
             return SonicConstants.ERROR_CODE_UNKNOWN;
         }
 
-        Map<String, List<String>> getResponseHeaderFields() {
+        public Map<String, List<String>> getResponseHeaderFields() {
             if (null == connectionImpl) {
                 return null;
             }
             return connectionImpl.getHeaderFields();
         }
     }
+
 
     /**
      * sub resource download callback.

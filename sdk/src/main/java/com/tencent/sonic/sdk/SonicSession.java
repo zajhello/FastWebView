@@ -703,6 +703,7 @@ public abstract class SonicSession implements Handler.Callback {
 
         // when find preload links in headers
         String preloadLink = server.getResponseHeaderField(SonicSessionConnection.CUSTOM_HEAD_FILED_LINK);
+
         if(TextUtils.isEmpty(preloadLink)){
             preloadLink = "https://mc.vip.qq.com/img/img-1.png?max_age=2592000";
         }
@@ -854,7 +855,7 @@ public abstract class SonicSession implements Handler.Callback {
             @Override
             public void run() {
                 if (resourceDownloaderEngine == null) {
-                    resourceDownloaderEngine = new SonicDownloadEngine(SonicDownloadCache.getSubResourceCache());
+                    resourceDownloaderEngine = new SonicDownloadEngine(SonicDownloadCache.getSubResourceCache(),config.SUPPORT_OKHTTP_DOWNLOADER);
                 }
 
                 resourceDownloaderEngine.addSubResourcePreloadTask(preloadLinks);

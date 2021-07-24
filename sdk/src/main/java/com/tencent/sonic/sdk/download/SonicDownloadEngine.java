@@ -103,11 +103,13 @@ public class SonicDownloadEngine implements Handler.Callback {
      */
     private SonicDownloadCache mCache;
 
+    private boolean mSupportOkhttpDownload;
+
     /**
-     *
      * @param cache A specific implementation of {@link SonicDownloadCache}
      */
-    public SonicDownloadEngine(SonicDownloadCache cache) {
+    public SonicDownloadEngine(SonicDownloadCache cache, boolean supportOkhttpDownload) {
+        this.mSupportOkhttpDownload = supportOkhttpDownload;
         mQueue = new SonicDownloadQueue();
         HandlerThread queueThread = new HandlerThread("Download-Thread");
         queueThread.start();
@@ -147,9 +149,9 @@ public class SonicDownloadEngine implements Handler.Callback {
      * if the number of downloading tasks is bigger than config, the task will be delayed before downloading pool is free.
      *
      * @param resourceUrl the resource's url
-     * @param ipAddress if dns prefetch the ip address, will use the ip instead of host
-     * @param cookie set the cookie for the download http request
-     * @param callback a callback used for notify the download progress and result
+     * @param ipAddress   if dns prefetch the ip address, will use the ip instead of host
+     * @param cookie      set the cookie for the download http request
+     * @param callback    a callback used for notify the download progress and result
      * @return the download task info
      */
     public DownloadTask download(String resourceUrl, String ipAddress, String cookie, SonicDownloadCallback callback) {
@@ -165,6 +167,8 @@ public class SonicDownloadEngine implements Handler.Callback {
         }
 
         final DownloadTask task = new DownloadTask();
+
+        task.mSupportOkhttpDownload = mSupportOkhttpDownload;
         task.mResourceUrl = resourceUrl;
         task.mCallbacks.add(callback);
         task.mCallbacks.add(new SonicDownloadCallback.SimpleDownloadCallback() {
@@ -217,7 +221,7 @@ public class SonicDownloadEngine implements Handler.Callback {
     /**
      * When the webview initiates a sub resource interception, the client invokes this method to retrieve the data
      *
-     * @param url The url of sub resource
+     * @param url     The url of sub resource
      * @param session current sonic session
      * @return Return the data to kernel
      */
@@ -269,6 +273,7 @@ public class SonicDownloadEngine implements Handler.Callback {
 
     /**
      * preload the sub resource in the "sonic-link" header.
+     *
      * @param preloadLinks The links which need to be preloaded.
      */
     public void addSubResourcePreloadTask(List<String> preloadLinks) {
@@ -277,7 +282,7 @@ public class SonicDownloadEngine implements Handler.Callback {
         for (final String link : preloadLinks) {
             if (!resourceTasks.containsKey(link)) {
                 resourceTasks.put(link, download(link, runtime.getHostDirectAddress(link),
-                                runtime.getCookie(link), new SonicDownloadClient.SubResourceDownloadCallback(link)
+                        runtime.getCookie(link), new SonicDownloadClient.SubResourceDownloadCallback(link)
                         )
                 );
             }
