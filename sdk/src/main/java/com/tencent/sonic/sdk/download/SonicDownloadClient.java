@@ -22,11 +22,6 @@ import com.tencent.sonic.sdk.SonicConstants;
 import com.tencent.sonic.sdk.SonicSessionStream;
 import com.tencent.sonic.sdk.SonicUtils;
 import com.tencent.sonic.sdk.net.OkHttpUtils;
-import com.tencent.sonic.sdk.net.interceptor.HttpInterceptor;
-import com.tencent.sonic.sdk.net.RequestHandle;
-import com.tencent.sonic.sdk.net.interceptor.HttpLogInterceptor;
-import com.tencent.sonic.sdk.provider.BaseHttpProvider;
-import com.tencent.sonic.sdk.provider.IHttpProvider;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -38,14 +33,11 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.GZIPInputStream;
 
 import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 

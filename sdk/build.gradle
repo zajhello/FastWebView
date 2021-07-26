@@ -25,24 +25,24 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    testCompile 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
 
 
     // Required for instrumented tests
-    androidTestCompile 'com.android.support:support-annotations:24.0.0'
-    androidTestCompile 'com.android.support.test:runner:0.5'
-    compile 'com.android.support:support-annotations:25.2.0'
+    androidTestImplementation 'com.android.support:support-annotations:24.0.0'
+    androidTestImplementation 'com.android.support.test:runner:0.5'
+    implementation 'com.android.support:support-annotations:25.2.0'
 
-    compile "com.squareup.okhttp3:okhttp:3.9.1"
-    compile "com.jakewharton.timber:timber:4.7.1"
+    implementation "com.squareup.okhttp3:okhttp:3.9.1"
+    implementation "com.jakewharton.timber:timber:4.7.1"
 //    compile "com.facebook.stetho:stetho:1.5.1"
 //    compile "com.facebook.stetho:stetho-okhttp3:1.5.1"
-    androidTestCompile 'com.squareup.okhttp3:mockwebserver:3.9.1'
+    androidTestImplementation 'com.squareup.okhttp3:mockwebserver:3.9.1'
 }
 
 

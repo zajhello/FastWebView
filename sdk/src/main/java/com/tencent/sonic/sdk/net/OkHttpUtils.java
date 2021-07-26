@@ -26,6 +26,7 @@ public class OkHttpUtils {
 
     private OkHttpClient createHttpClient(IHttpProvider provider) {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
+
         builder.connectTimeout(5, TimeUnit.SECONDS);
         builder.readTimeout(15, TimeUnit.SECONDS);
 
@@ -34,6 +35,8 @@ public class OkHttpUtils {
 
         RequestHandle operator = provider.requestOperator();
         builder.addInterceptor(new HttpInterceptor(operator));
+
+
 
 //        if (provider.enableLog()) {
 //            builder.addInterceptor(new HttpLogInterceptor());
