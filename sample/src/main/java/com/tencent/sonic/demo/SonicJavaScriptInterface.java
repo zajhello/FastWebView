@@ -19,6 +19,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.webkit.JavascriptInterface;
 
+import com.tencent.sonic.demo.agent.SonicSessionClientImpl;
 import com.tencent.sonic.sdk.SonicDiffDataCallback;
 
 import org.json.JSONObject;

@@ -11,11 +11,12 @@
  *
  */
 
-package com.tencent.sonic.demo;
+package com.tencent.sonic.demo.agent;
 
 import android.os.Bundle;
 import android.webkit.WebView;
 
+import com.just.agentweb.AgentWeb;
 import com.tencent.sonic.sdk.SonicSessionClient;
 
 import java.util.HashMap;
@@ -26,37 +27,33 @@ import java.util.HashMap;
 
 public class SonicSessionClientImpl extends SonicSessionClient {
 
-    private WebView webView;
 
-    public void bindWebView(WebView webView) {
-        this.webView = webView;
+    private AgentWeb mAgentWeb;
+
+    public void bindWebView(AgentWeb agentWeb) {
+        this.mAgentWeb = agentWeb;
     }
 
     public WebView getWebView() {
-        return webView;
+        return this.mAgentWeb.getWebCreator().getWebView();
     }
 
     @Override
     public void loadUrl(String url, Bundle extraData) {
-        webView.loadUrl(url);
+        this.mAgentWeb.getUrlLoader().loadUrl(url);
+
     }
 
     @Override
     public void loadDataWithBaseUrl(String baseUrl, String data, String mimeType, String encoding, String historyUrl) {
-        webView.loadDataWithBaseURL(baseUrl, data, mimeType, encoding, historyUrl);
+        this.mAgentWeb.getUrlLoader().loadDataWithBaseURL(baseUrl, data, mimeType, encoding, historyUrl);
+
     }
 
 
     @Override
     public void loadDataWithBaseUrlAndHeader(String baseUrl, String data, String mimeType, String encoding, String historyUrl, HashMap<String, String> headers) {
         loadDataWithBaseUrl(baseUrl, data, mimeType, encoding, historyUrl);
-    }
-
-    public void destroy() {
-        if (null != webView) {
-            webView.destroy();
-            webView = null;
-        }
     }
 
 }

@@ -39,6 +39,8 @@ import com.just.agentweb.MiddlewareWebClientBase;
 import com.just.agentweb.PermissionInterceptor;
 import com.just.agentweb.WebChromeClient;
 import com.tencent.sonic.R;
+import com.tencent.sonic.demo.agent.SonicSessionClientImpl;
+import com.tencent.sonic.demo.agent.SonicWebSettingImpl;
 import com.tencent.sonic.sdk.SonicCacheInterceptor;
 import com.tencent.sonic.sdk.SonicConfig;
 import com.tencent.sonic.sdk.SonicConstants;
@@ -177,7 +179,7 @@ public class BrowserActivity extends Activity {
 
         // webview is ready now, just tell session client to bind
         if (mSonicSessionClient != null) {
-            mSonicSessionClient.bindWebView(mAgentWeb.getWebCreator().getWebView());
+            mSonicSessionClient.bindWebView(mAgentWeb);
             mSonicSessionClient.clientReady();
         } else { // default mode
             mAgentWeb.getWebCreator().getWebView().loadUrl(url);

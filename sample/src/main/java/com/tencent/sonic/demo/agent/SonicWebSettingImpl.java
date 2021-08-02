@@ -1,4 +1,4 @@
-package com.tencent.sonic.demo;
+package com.tencent.sonic.demo.agent;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -11,6 +11,8 @@ import com.just.agentweb.AgentWeb;
 import com.just.agentweb.DefaultDownloadImpl;
 import com.just.agentweb.IAgentWebSettings;
 import com.just.agentweb.WebListenerManager;
+import com.tencent.sonic.demo.SonicJavaScriptInterface;
+import com.tencent.sonic.demo.agent.SonicSessionClientImpl;
 
 public class SonicWebSettingImpl extends AbsAgentWebSettings {
 

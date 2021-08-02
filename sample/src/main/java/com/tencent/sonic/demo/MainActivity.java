@@ -28,6 +28,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.tencent.sonic.R;
+import com.tencent.sonic.demo.agent.AgentActivity;
 import com.tencent.sonic.sdk.SonicConfig;
 import com.tencent.sonic.sdk.SonicEngine;
 import com.tencent.sonic.sdk.SonicSessionConfig;
@@ -133,6 +134,11 @@ public class MainActivity extends Activity {
         });
 
         DEMO_URL = urlListAdapter.getCheckedUrl();
+
+        Button btnAgentWithSonic = findViewById(R.id.btn_agent);
+        btnAgentWithSonic.setOnClickListener(view -> {
+            startAgentActivity();
+        });
     }
 
     private void init() {
@@ -177,4 +183,10 @@ public class MainActivity extends Activity {
         startActivityForResult(intent, -1);
     }
 
+    private void startAgentActivity() {
+        Intent intent = new Intent(this, AgentActivity.class);
+        intent.putExtra(BrowserActivity.PARAM_URL, DEMO_URL);
+        intent.putExtra(SonicJavaScriptInterface.PARAM_CLICK_TIME, System.currentTimeMillis());
+        startActivityForResult(intent, -1);
+    }
 }

@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.2"
+    compileSdkVersion 28
+    buildToolsVersion "28.0.3"
     defaultConfig {
         applicationId "com.tencent.sonic"
         minSdkVersion 16
-        targetSdkVersion 26
+        targetSdkVersion 28
         versionCode 3
         versionName "3.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -17,10 +17,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support.constraint:constraint-layout:2.0.1'
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
@@ -31,9 +36,11 @@ dependencies {
     // compile sonic-sdk from local path
      implementation project(path: ':sdk')
 
-    implementation 'com.android.support:appcompat-v7:26.1.0'
-    implementation 'com.android.support:design:26.1.0'
+//    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support:design:28.0.0'
     implementation 'com.github.Justson:Downloader:v4.1.9'
+//    implementation 'com.github.Justson.AgentWeb:agentweb-core:v4.1.9'
+//    implementation 'com.github.Justson.AgentWeb:agentweb-filechooser:v4.1.9'
     implementation project(':agentweb-core')
     implementation project(':agentweb-filechooser')
 
