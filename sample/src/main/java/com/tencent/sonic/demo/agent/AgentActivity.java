@@ -133,5 +133,4 @@ public class AgentActivity extends AppCompatActivity {
         }
         super.onDestroy();
     }
-
 }
