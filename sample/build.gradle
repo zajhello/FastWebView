@@ -5,7 +5,7 @@ android {
     buildToolsVersion "26.0.2"
     defaultConfig {
         applicationId "com.tencent.sonic"
-        minSdkVersion 19
+        minSdkVersion 16
         targetSdkVersion 26
         versionCode 3
         versionName "3.0"
@@ -31,11 +31,11 @@ dependencies {
     // compile sonic-sdk from local path
      implementation project(path: ':sdk')
 
-    implementation 'com.android.support:appcompat-v7:25.2.0'
-    implementation 'com.android.support:design:25.3.1'
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support:design:26.1.0'
     implementation 'com.github.Justson:Downloader:v4.1.9'
-    implementation 'com.github.Justson.AgentWeb:agentweb-core:v4.1.9'
-    implementation 'com.github.Justson.AgentWeb:agentweb-filechooser:v4.1.9'
+    implementation project(':agentweb-core')
+    implementation project(':agentweb-filechooser')
 
     testImplementation 'junit:junit:4.12'
 }

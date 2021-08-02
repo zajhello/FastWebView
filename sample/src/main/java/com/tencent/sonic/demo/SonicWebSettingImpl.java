@@ -66,3 +66,4 @@ public class SonicWebSettingImpl extends AbsAgentWebSettings {
                         , webView, mAgentWeb.getPermissionInterceptor()));
     }
 }
+
