@@ -28,8 +28,6 @@ public class AgentActivity extends AppCompatActivity {
 
     public final static String PARAM_URL = "param_url";
 
-    public final static String PARAM_MODE = "param_mode";
-
     private FrameLayout mContainer;
     private AgentWeb mAgentWeb;
     private MiddlewareWebChromeBase mMiddleWareWebChrome;
