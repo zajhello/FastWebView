@@ -704,9 +704,9 @@ public abstract class SonicSession implements Handler.Callback {
         // when find preload links in headers
         String preloadLink = server.getResponseHeaderField(SonicSessionConnection.CUSTOM_HEAD_FILED_LINK);
 
-        if(TextUtils.isEmpty(preloadLink)){
-            preloadLink = "https://mc.vip.qq.com/img/img-1.png?max_age=2592000";
-        }
+//        if(TextUtils.isEmpty(preloadLink)){
+//            preloadLink = "https://mc.vip.qq.com/img/img-1.png?max_age=2592000";
+//        }
 
         if (!TextUtils.isEmpty(preloadLink)) {
             preloadLinks = Arrays.asList(preloadLink.split(";"));
@@ -1095,6 +1095,7 @@ public abstract class SonicSession implements Handler.Callback {
         statistics.finalMode = finalResultCode = finalCode;
 
         if (!notify) return;
+
 
         if (wasNotified.get()) {
             SonicUtils.log(TAG, Log.ERROR, "session(" + sId + ")  setResult: notify error -> already has notified!");

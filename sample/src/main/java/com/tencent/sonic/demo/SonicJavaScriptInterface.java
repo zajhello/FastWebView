@@ -61,7 +61,7 @@ public class SonicJavaScriptInterface {
                             String jsCode = "javascript:" + jsCallbackFunc + "('"+ toJsString(resultData) + "')";
                             sessionClient.getWebView().loadUrl(jsCode);
                         }
-                    };
+                    }; //javascript:getDiffDataCallback('{\"code\":304,\"srcCode\":1000,\"extra\":{\"eTag\":\"9b4c42bdd042a033c149f52a64bb83cd48d70e87\",\"template-tag\":\"9c75e5f7a3f386c434503aacb9179c2f11dd72b0\",\"cache-offline\":\"true\",\"isReload\":\"false\"}}')
                     if (Looper.getMainLooper() == Looper.myLooper()) {
                         callbackRunnable.run();
                     } else {
