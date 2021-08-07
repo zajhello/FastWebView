@@ -84,6 +84,16 @@ public class SonicImpl {
                 }
                 return super.shouldInterceptRequest(view, url);
             }
+
+            /**
+             * 资源拦截
+             * @param webView
+             * @param url
+             */
+            @Override
+            public void onLoadResource(WebView webView, String url) {
+                super.onLoadResource(webView, url);
+            }
         };
     }
 
