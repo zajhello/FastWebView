@@ -21,8 +21,7 @@ import com.just.agentweb.WebChromeClient;
 import com.tencent.sonic.R;
 
 public class AgentActivity extends AppCompatActivity {
-
-
+    
     private SonicImpl mSonicImpl;
     private Intent mIntent;
 
