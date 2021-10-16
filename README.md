@@ -16,6 +16,7 @@ compile 'com.tencent.sonic:sdk:3.1.0'
 
 > SonicRuntime is a class which interacts with the overall running information in the system, including Context, UA, ID (which is the unique identification for the saved data) and other information.
 
+
 ```Java
 /**
 * Here is a sample subclass of SonicRuntime
